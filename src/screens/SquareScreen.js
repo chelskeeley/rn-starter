@@ -1,37 +1,48 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import ColorCounter from "../components/ColorCounter";
 
 const INCREMENT = 15;
 
-const SquareScreen = () => {
-  const [red, setRed] = useState(0);
-  const [green, setGreen] = useState(0);
-  const [blue, setBlue] = useState(0);
+const reducer = (state, action) => {
+  switch (action.colorToChange) {
+    case "red":
+      return {...state, red: state.red + action.amount};
 
-  const setColor = (stateValue, change, setter) => {
-    stateValue + change > 255 || stateValue + change < 0 ? null : setter(stateValue + change);
+    case "green":
+      return { ...state, green: state.green + action.amount };
+
+    case "blue":
+      return { ...state, blue: state.blue + action.amount };
+
+    default:
+      return state;
   }
+}
+
+const SquareScreen = () => {
+
+  const [{ red, green, blue }, dispatch] = useReducer(reducer, { red: 0, green: 0, blue: 0 });
 
   return (
     <View>
       <ColorCounter
-        onIncrease={() => setColor(red, INCREMENT, setRed)}
-        onDecrease={() => setColor(red, INCREMENT * -1, setRed)}
+        onIncrease={() => dispatch({ colorToChange: "red", amount: INCREMENT })}
+        onDecrease={() => dispatch({ colorToChange: "red", amount: INCREMENT * -1 })}
         color="Red"
       />
       <ColorCounter
-        onIncrease={() => setColor(green, INCREMENT, setGreen)}
-        onDecrease={() => setColor(green, INCREMENT * -1, setGreen)}
+        onIncrease={() => dispatch({ colorToChange: "green", amount: INCREMENT })}
+        onDecrease={() => dispatch({ colorToChange: "green", amount: INCREMENT * -1 })}
         color="Green"
       />
       <ColorCounter
-        onIncrease={() => setColor(blue, INCREMENT, setBlue)}
-        onDecrease={() => setColor(blue, INCREMENT * -1, setBlue)}
+        onIncrease={() => dispatch({ colorToChange: "blue", amount: INCREMENT })}
+        onDecrease={() => dispatch({ colorToChange: "blue", amount: INCREMENT * -1 })}
         color="Blue"
       />
-      <Text></Text>
+      <Text>Output</Text>
       <View style={{ height: 150, width: 150, backgroundColor: `rgb(${red}, ${green}, ${blue})`}}></View>
     </View>
   );
